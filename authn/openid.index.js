@@ -56,7 +56,13 @@ exports.handler = (event, context, callback) => {
 function mainProcess(event, context, callback) {
 
   // Get request, request headers, and querystring dictionary
-  const request = event.Records[0].cf.request;
+  var request = event.Records[0].cf.request;
+
+  // Updating Uri with index.html to support subdirectories on CF
+  var receivedUri = request.uri;
+  var updatedUri = receivedUri.replace(/\/$/, '\/index.html'); 
+  request.uri = updatedUri;
+  
   const headers = request.headers;
   const queryDict = qs.parse(request.querystring);
   if (event.Records[0].cf.config.hasOwnProperty('test')) {
