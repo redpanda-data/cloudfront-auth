@@ -336,15 +336,15 @@ function oktaConfiguration() {
       required: true,
       default: R.pathOr('', ['BASE_URL'], oldConfig)
     },
-    CLIENT_ID: {
-      message: colors.red("Client ID"),
-      required: true,
-      default: R.pathOr('', ['AUTH_REQUEST', 'client_id'], oldConfig)
-    },
     REDIRECT_URI: {
       message: colors.red("Redirect URI"),
       required: true,
       default: R.pathOr('', ['AUTH_REQUEST', 'redirect_uri'], oldConfig)
+    },
+    DISCOVERY_DOCUMENT_PATH: {
+      message: colors.red("Discovery document path (OKTA oauth2)"),
+      required: true,
+      default: R.pathOr('', ['DISCOVERY_DOCUMENT_PATH', 'redirect_uri'], oldConfig)
     },
     SESSION_DURATION: {
       pattern: /^[0-9]*$/,
@@ -352,6 +352,11 @@ function oktaConfiguration() {
       message: colors.green("Entry must only contain numbers"),
       required: true,
       default: R.pathOr('', ['SESSION_DURATION'], oldConfig)/60/60
+    },
+    CLIENT_ID: {
+      message: colors.red("Client ID"),
+      required: true,
+      default: R.pathOr('', ['AUTH_REQUEST', 'client_id'], oldConfig)
     }
   };
 
@@ -376,7 +381,7 @@ function oktaConfiguration() {
   }, function(err, result) {
     config.PRIVATE_KEY = fs.readFileSync('distributions/' + config.DISTRIBUTION + '/id_rsa', 'utf8');
     config.PUBLIC_KEY = fs.readFileSync('distributions/' + config.DISTRIBUTION + '/id_rsa.pub', 'utf8');
-    config.DISCOVERY_DOCUMENT = result.BASE_URL + '/.well-known/openid-configuration';
+    config.DISCOVERY_DOCUMENT = result.DISCOVERY_DOCUMENT_PATH + '/.well-known/openid-configuration';
     config.SESSION_DURATION = parseInt(result.SESSION_DURATION, 10) * 60 * 60;
 
     config.BASE_URL = result.BASE_URL;
